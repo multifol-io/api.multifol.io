@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.002.0
+VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.multifol.io", "api.multifol.io.csproj", "{E315CD2D-E9EA-4458-9B88-2612D1537583}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.multifol.io", "api.multifol.io.csproj", "{ADDEBB76-BB8E-4FEF-96D0-16CE18DB4E2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E315CD2D-E9EA-4458-9B88-2612D1537583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E315CD2D-E9EA-4458-9B88-2612D1537583}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E315CD2D-E9EA-4458-9B88-2612D1537583}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E315CD2D-E9EA-4458-9B88-2612D1537583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADDEBB76-BB8E-4FEF-96D0-16CE18DB4E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADDEBB76-BB8E-4FEF-96D0-16CE18DB4E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADDEBB76-BB8E-4FEF-96D0-16CE18DB4E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADDEBB76-BB8E-4FEF-96D0-16CE18DB4E2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7282C78E-0F24-403E-BC35-B7950BC9DB92}
+		SolutionGuid = {B9228997-18C7-4B74-8C23-39DBEDD79095}
 	EndGlobalSection
 EndGlobal
