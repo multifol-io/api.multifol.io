@@ -1,24 +1,24 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System.Net.Http;
 
-namespace api
+namespace api.multifol.io
 {
-    public static class GetQuotes
+    public class GetQuotes
     {
-        [FunctionName("GetQuotes")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        private readonly ILogger<GetQuotes> _logger;
+
+        public GetQuotes(ILogger<GetQuotes> logger)
         {
-            log.LogInformation("GetQuotes processed a request.");
+            _logger = logger;
+        }
+
+        [Function("GetQuotes")]
+        public async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
+        {
+            _logger.LogInformation("GetQuotes processed a request.");
 
             string ticker = req.Query["ticker"];
             string apikey = req.Query["apikey"];
@@ -30,11 +30,13 @@ namespace api
 
             string url = $"https://eodhd.com/api/real-time/{ticker}?fmt=json&api_token={apikey}";
             var httpClient = new HttpClient();
-            try {
+            try
+            {
                 var quoteDataJson = await httpClient.GetStringAsync(url);
                 return new OkObjectResult(quoteDataJson);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new BadRequestObjectResult(ex.GetType().Name + ": " + ex.Message);
             }
         }
