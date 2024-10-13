@@ -69,6 +69,7 @@ namespace api.multifol.io
                 // connection will be closed by the 'using' block
                 Console.WriteLine("Closing connection");
                 return new OkObjectResult("Welcome to Azure Functions!");
+            }
         }
     }
 }
