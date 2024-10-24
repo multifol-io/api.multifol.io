@@ -20,25 +20,19 @@ namespace api.multifol.io
         [Function("LookupOrg")]
         public async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
         {
-            string? keyVaultName = Environment.GetEnvironmentVariable("KEY_VAULT_NAME");
-            var kvUri = "https://" + keyVaultName + ".vault.azure.net";
-            _logger.LogInformation($"KeyVault uri: {kvUri}");
+            _logger.LogInformation("Get vars");
+            var userID = Environment.GetEnvironmentVariable("MYSQL_USER");
+            var dbName = Environment.GetEnvironmentVariable("MYSQL_DATABASE");
+            var pw = Environment.GetEnvironmentVariable("MYSQL_PASSWORD");
+            var server = Environment.GetEnvironmentVariable("MYSQL_SERVER");
 
-            var secretClient = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-
-            _logger.LogInformation("Get secrets");
-            var userID = await secretClient.GetSecretAsync("database");
-            var dbName = await secretClient.GetSecretAsync("db-user");
-            var pw = await secretClient.GetSecretAsync("db-pw");
-            var server = await secretClient.GetSecretAsync("server");
-
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            _logger.LogInformation("Create connection string");
             var builder = new MySqlConnectionStringBuilder
             {
-                Server = server.Value.Value + ".mysql.database.azure.com",
-                Database = dbName.Value.Value,
-                UserID = userID.Value.Value,
-                Password = pw.Value.Value,
+                Server = server + ".mysql.database.azure.com",
+                Database = dbName,
+                UserID = userID,
+                Password = pw,
                 SslMode = MySqlSslMode.Required,
             };
 
