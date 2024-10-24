@@ -22,8 +22,11 @@ namespace api.multifol.io
         {
             string? keyVaultName = Environment.GetEnvironmentVariable("KEY_VAULT_NAME");
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
+            _logger.LogInformation($"KeyVault uri: {kvUri}");
+            
             var secretClient = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
 
+            _logger.LogInformation("Get secrets");
             var userID = await secretClient.GetSecretAsync("database");
             var dbName = await secretClient.GetSecretAsync("db-user");
             var pw = await secretClient.GetSecretAsync("db-pw");
@@ -39,6 +42,8 @@ namespace api.multifol.io
                 SslMode = MySqlSslMode.Required,
             };
 
+            // TODO: prevent SQL injection. 
+            // TODO: split into list of terms, and handle properly in query.
             var terms = req.Query["terms"];
 
 
