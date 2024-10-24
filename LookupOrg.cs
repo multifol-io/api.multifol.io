@@ -23,7 +23,7 @@ namespace api.multifol.io
             string? keyVaultName = Environment.GetEnvironmentVariable("KEY_VAULT_NAME");
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
             _logger.LogInformation($"KeyVault uri: {kvUri}");
-            
+
             var secretClient = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
 
             _logger.LogInformation("Get secrets");
@@ -42,38 +42,36 @@ namespace api.multifol.io
                 SslMode = MySqlSslMode.Required,
             };
 
-            // TODO: prevent SQL injection. 
-            // TODO: split into list of terms, and handle properly in query.
-            var terms = req.Query["terms"];
-
+            // TODO: support multiple terms
+            var term = req.Query["term"];
 
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 Console.WriteLine("Opening connection");
                 await conn.OpenAsync();
 
-                using (var command = conn.CreateCommand())
-                {
-                    {
-                        command.CommandText = 
+                string sql =
                             "select *, 1 as rowOrder from organizations where " +
-                            $"MATCH (Organization) AGAINST ('{terms}' IN BOOLEAN MODE) " +
+                            "MATCH (Organization) AGAINST ('@term' IN BOOLEAN MODE) " +
                             "UNION " +
                             "select *, 2 as rowOrder from organizations where " +
-                            $"MATCH(Organization) AGAINST(concat('{terms}* -{terms}') IN BOOLEAN MODE) "+
+                            "MATCH(Organization) AGAINST(concat('@term* -@term') IN BOOLEAN MODE) " +
                             "ORDER by rowOrder, Organization";
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand(sql, conn))
+                {
+                    command.Parameters.AddWithValue("@term", term);
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
                         {
-                            while (await reader.ReadAsync())
-                            {
-                                var EIN = reader.GetString(0);
-                                var organization = reader.GetString(1);
-                                var city = reader.GetString(2);
-                                var state = reader.GetString(3);
-                                var businessCode = reader.GetString(4);
-                                _logger.LogInformation($"{EIN}, {organization}, {city}, {state}, {businessCode}");
-                            }
+                            var EIN = reader.GetString(0);
+                            var organization = reader.GetString(1);
+                            var city = reader.GetString(2);
+                            var state = reader.GetString(3);
+                            var businessCode = reader.GetString(4);
+                            _logger.LogInformation($"{EIN}, {organization}, {city}, {state}, {businessCode}");
                         }
                     }
                 }
