@@ -78,13 +78,15 @@ namespace api.multifol.io
                         }
                     }
 
-                    return new OkObjectResult("Welcome to Azure Functions!");
+                    return new OkObjectResult("Returned Ok");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
+                return new BadRequestObjectResult("Returned BadRequest");
+
             }
         }
     }
