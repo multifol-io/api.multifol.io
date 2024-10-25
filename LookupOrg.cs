@@ -36,8 +36,12 @@ namespace api.multifol.io
                 SslMode = MySqlSslMode.Required,
             };
 
+            _logger.LogInformation("Get parameters");
+
             // TODO: support multiple terms
             var term = req.Query["term"];
+
+            _logger.LogInformation("Create connection");
 
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -55,6 +59,8 @@ namespace api.multifol.io
                 using (var command = new MySqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@term", term);
+
+                    Console.WriteLine("Execute command");
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
