@@ -63,10 +63,7 @@ namespace api.multifol.io
                     command.CommandText = sql;
                     command.Parameters.AddWithValue("term", term);
 
-                    _logger.LogInformation($"Execute command searching for {term}");
-                    await command.ExecuteNonQueryAsync();
-                    
-                    _logger.LogInformation("Read results");
+                    _logger.LogInformation($"Execute reader searching for {term}");
                     using var reader = await command.ExecuteReaderAsync();
                     bool fieldCountShown = false;
                     while (await reader.ReadAsync())
