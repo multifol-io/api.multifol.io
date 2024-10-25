@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
+using System.Reflection.Emit;
 
 namespace api.multifol.io
 {
@@ -39,7 +41,10 @@ namespace api.multifol.io
             _logger.LogInformation("Get parameters");
 
             // TODO: support multiple terms
-            var term = req.Query["term"];
+            string term = req.Query["term"];
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            term = term ?? data?.term;
 
             _logger.LogInformation("Create connection");
 
