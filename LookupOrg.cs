@@ -22,13 +22,11 @@ namespace api.multifol.io
         [Function("LookupOrg")]
         public async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
         {
-            _logger.LogInformation("Get vars");
             var userID = Environment.GetEnvironmentVariable("MYSQL_USER");
             var dbName = Environment.GetEnvironmentVariable("MYSQL_DATABASE");
             var pw = Environment.GetEnvironmentVariable("MYSQL_PASSWORD");
             var server = Environment.GetEnvironmentVariable("MYSQL_SERVER");
 
-            _logger.LogInformation("Create connection string");
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = server + ".mysql.database.azure.com",
@@ -38,20 +36,15 @@ namespace api.multifol.io
                 SslMode = MySqlSslMode.Required,
             };
 
-            _logger.LogInformation("Get parameters");
-
             // TODO: support multiple terms
             string term = req.Query["term"];
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             term = term ?? data?.term;
 
-            _logger.LogInformation("Create connection");
-
             try
             {
                 await using var connection = new MySqlConnection(builder.ConnectionString);
-                _logger.LogInformation("Opening connection");
                 await connection.OpenAsync();
 
                 string sql =
@@ -92,10 +85,8 @@ namespace api.multifol.io
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                _logger.LogError(ex, "error");
                 return new BadRequestObjectResult("Returned BadRequest");
-
             }
         }
     }
