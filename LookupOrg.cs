@@ -85,7 +85,7 @@ namespace api.multifol.io
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "error");
+                _logger.LogError(ex, ex.Message + '\n' + ex.StackTrace);
                 return new BadRequestObjectResult("Returned BadRequest");
             }
         }
