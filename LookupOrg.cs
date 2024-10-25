@@ -42,6 +42,11 @@ namespace api.multifol.io
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             term = term ?? data?.term;
 
+            if (string.IsNullOrEmpty(term))
+            {
+                return new OkObjectResult("Ok, 0, results returned");
+            }
+
             try
             {
                 await using var connection = new MySqlConnection(builder.ConnectionString);
@@ -55,6 +60,8 @@ namespace api.multifol.io
                             "MATCH(Organization) AGAINST(concat(@term, '* -', @term) IN BOOLEAN MODE) " +
                             "ORDER by rowOrder, Organization";
 
+                int rowCount = 0;
+
                 using (var command = new MySqlCommand())
                 {
                     command.Connection = connection;
@@ -66,6 +73,7 @@ namespace api.multifol.io
                     bool fieldCountShown = false;
                     while (await reader.ReadAsync())
                     {
+                        rowCount++;
                         if (!fieldCountShown)
                         {
                             _logger.LogInformation($"fields: {reader.FieldCount.ToString()}");
@@ -81,7 +89,7 @@ namespace api.multifol.io
                     }
                 }
 
-                return new OkObjectResult("Returned Ok");
+                return new OkObjectResult($"Ok, {rowCount}, results returned");
             }
             catch (Exception ex)
             {
