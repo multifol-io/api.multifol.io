@@ -63,7 +63,7 @@ namespace api.multifol.io
                     command.CommandText = sql;
                     command.Parameters.AddWithValue("term", term);
 
-                    _logger.LogInformation("Execute command");
+                    _logger.LogInformation($"Execute command searching for {term}");
                     await command.ExecuteNonQueryAsync();
                     
                     _logger.LogInformation("Read results");
