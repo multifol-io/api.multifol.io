@@ -52,7 +52,7 @@ namespace api.multifol.io
 
                     string sql =
                                 "select *, 1 as rowOrder from organizations where " +
-                                "MATCH (Organization) AGAINST ('@term' IN BOOLEAN MODE); ";
+                                "MATCH (Organization) AGAINST (?term IN BOOLEAN MODE); ";
                                 //"UNION " +
                                 //"select *, 2 as rowOrder from organizations where " +
                                 //"MATCH(Organization) AGAINST(concat(@term, '* -', @term) IN BOOLEAN MODE) " +
@@ -60,7 +60,7 @@ namespace api.multifol.io
 
                     using (var command = new MySqlCommand(sql, conn))
                     {
-                        command.Parameters.AddWithValue("@term", term);
+                        command.Parameters.AddWithValue("term", term);
 
                         Console.WriteLine("Execute command");
 
