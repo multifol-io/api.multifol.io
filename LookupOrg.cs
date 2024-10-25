@@ -50,7 +50,7 @@ namespace api.multifol.io
                 await connection.OpenAsync();
 
                 string sql =
-                            "select *, 1 as rowOrder from organizations where " +
+                            "select * from organizations where " +
                             "MATCH (Organization) AGAINST (@term IN BOOLEAN MODE); ";
                 //"UNION " +
                 //"select *, 2 as rowOrder from organizations where " +
@@ -68,8 +68,15 @@ namespace api.multifol.io
                     
                     _logger.LogInformation("Read results");
                     using var reader = await command.ExecuteReaderAsync();
+                    bool fieldCountShown = false;
                     while (await reader.ReadAsync())
                     {
+                        if (!fieldCountShown)
+                        {
+                            _logger.LogInformation($"fields: {reader.FieldCount.ToString()}");
+                            fieldCountShown = true;
+                        }
+
                         var EIN = reader.GetString(0);
                         var organization = reader.GetString(1);
                         var city = reader.GetString(2);
