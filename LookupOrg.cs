@@ -43,40 +43,48 @@ namespace api.multifol.io
 
             _logger.LogInformation("Create connection");
 
-            using (var conn = new MySqlConnection(builder.ConnectionString))
+            try
             {
-                Console.WriteLine("Opening connection");
-                await conn.OpenAsync();
-
-                string sql =
-                            "select *, 1 as rowOrder from organizations where " +
-                            "MATCH (Organization) AGAINST ('@term' IN BOOLEAN MODE) " +
-                            "UNION " +
-                            "select *, 2 as rowOrder from organizations where " +
-                            "MATCH(Organization) AGAINST(concat('@term* -@term') IN BOOLEAN MODE) " +
-                            "ORDER by rowOrder, Organization";
-
-                using (var command = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(builder.ConnectionString))
                 {
-                    command.Parameters.AddWithValue("@term", term);
+                    Console.WriteLine("Opening connection");
+                    await conn.OpenAsync();
 
-                    Console.WriteLine("Execute command");
+                    string sql =
+                                "select *, 1 as rowOrder from organizations where " +
+                                "MATCH (Organization) AGAINST ('@term' IN BOOLEAN MODE) " +
+                                "UNION " +
+                                "select *, 2 as rowOrder from organizations where " +
+                                "MATCH(Organization) AGAINST(concat('@term* -@term') IN BOOLEAN MODE) " +
+                                "ORDER by rowOrder, Organization";
 
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using (var command = new MySqlCommand(sql, conn))
                     {
-                        while (await reader.ReadAsync())
+                        command.Parameters.AddWithValue("@term", term);
+
+                        Console.WriteLine("Execute command");
+
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            var EIN = reader.GetString(0);
-                            var organization = reader.GetString(1);
-                            var city = reader.GetString(2);
-                            var state = reader.GetString(3);
-                            var businessCode = reader.GetString(4);
-                            _logger.LogInformation($"{EIN}, {organization}, {city}, {state}, {businessCode}");
+                            while (await reader.ReadAsync())
+                            {
+                                var EIN = reader.GetString(0);
+                                var organization = reader.GetString(1);
+                                var city = reader.GetString(2);
+                                var state = reader.GetString(3);
+                                var businessCode = reader.GetString(4);
+                                _logger.LogInformation($"{EIN}, {organization}, {city}, {state}, {businessCode}");
+                            }
                         }
                     }
-                }
 
-                return new OkObjectResult("Welcome to Azure Functions!");
+                    return new OkObjectResult("Welcome to Azure Functions!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
             }
         }
     }
