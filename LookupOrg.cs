@@ -52,11 +52,11 @@ namespace api.multifol.io
 
                     string sql =
                                 "select *, 1 as rowOrder from organizations where " +
-                                "MATCH (Organization) AGAINST (@term IN BOOLEAN MODE) " +
-                                "UNION " +
-                                "select *, 2 as rowOrder from organizations where " +
-                                "MATCH(Organization) AGAINST(concat(@term, '* -', @term) IN BOOLEAN MODE) " +
-                                "ORDER by rowOrder, Organization";
+                                "MATCH (Organization) AGAINST (@term IN BOOLEAN MODE); ";
+                                //"UNION " +
+                                //"select *, 2 as rowOrder from organizations where " +
+                                //"MATCH(Organization) AGAINST(concat(@term, '* -', @term) IN BOOLEAN MODE) " +
+                                //"ORDER by rowOrder, Organization";
 
                     using (var command = new MySqlCommand(sql, conn))
                     {
